@@ -40,6 +40,7 @@ int main(){
 			dc[i+1].push_back(tmp);
 		}
 		diff += stack.back().second;
+		stack.pop_back();
 	}
 	for (int i = 0; i < dc.back().size(); ++i){
 		if (dc.back()[i] == expected){
