@@ -29,7 +29,7 @@ def dp(n): #interpreto el n como binario donde hay 1 si puedo asignar a una fies
     while(mask_tmp!=0): #si encuentran como hacer esto con for, sería mejor, pero es lo mismo que lo de las diapos, solo recorre subsets
         mask_tmp=n&(mask_tmp-1)
         opuesto=n&(~mask_tmp) #opuesto es el subconjunto que tiene a los que quedaron sin fiesta en mask_tmp
-        if opuesto<mask_tmp:
+        if opuesto<mask_tmp: #como recorre subconjuntos de mayor a menor, solo llamo a dp para los que son menores, si el subconjunto da más grande no tiene sentido
             dp_sub=dp(mask_tmp)+dp(opuesto)#sumo la mejor fiestita del subconjunto + la mejor fiestita de los que quedaron afuera
             if dp_value < dp_sub:
                 dp_value=dp_sub
