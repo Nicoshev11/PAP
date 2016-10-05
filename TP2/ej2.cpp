@@ -4,10 +4,8 @@
 using namespace std;
 
 char compare(vector<vector<long long int> > const &valores, int i, int j) {
-	if (valores[i][0] == valores[j][0])
-		return 0;
 	bool less = valores[i][0] < valores[j][0];
-	for (int k = 1; k < valores[i].size(); ++k){
+	for (int k = 0; k < valores[i].size(); ++k){
 		if (valores[i][k] == valores[j][k] || (valores[i][k] < valores[j][k] != less))
 			return 0;
 	}
@@ -28,10 +26,8 @@ void buildGraph(vector<vector<long long int> > const &valores, vector<vector<boo
 			adyMatrix[i][j] = compare(valores, i, j);
 		}	
 	}
-	for (int i = 1; i <= valores.size(); ++i){
-		grafo[0][i] = true;
-	}
 	for (int i = 1; i <= valores.size(); ++i) {
+		grafo[0][i] = true;
 		for (int j = 1; j <= valores.size(); ++j){
 			grafo[i][j+valores.size()] = adyMatrix[i-1][j-1] < 0; 
 		}
@@ -39,7 +35,7 @@ void buildGraph(vector<vector<long long int> > const &valores, vector<vector<boo
 	}
 }
 
-void updateGraph(vector<vector<bool> >  &grafo, vector<int>  &previousNode) {
+void updateGraph(vector<vector<bool> >  &grafo, vector<int> const &previousNode) {
 	int u = previousNode[previousNode.size()-1];
 	int v = previousNode.size()-1;
 	while (u != -1) {
@@ -51,9 +47,9 @@ void updateGraph(vector<vector<bool> >  &grafo, vector<int>  &previousNode) {
 	return;
 }
 
-bool hasPathFromSourceToSink(vector<vector<bool> >  &grafo, vector<int>  &previousNode) {
+bool hasPathFromSourceToSink(vector<vector<bool> > const &grafo, vector<int>  &previousNode) {
 	for (int i = 0; i < previousNode.size(); ++i)
-		previousNode[i] = -1;
+		previousNode[i] = -1;  //inicializamos todos los nodos como no tocados (que el 0 quede en -1 es util)
 	vector<int> pila (1, 0);  //inicializamos la pila solo con el nodo source
 	pila.reserve(grafo.size());
 	while (pila.size()>0) {
@@ -77,7 +73,7 @@ int main() {
 
 	int cantAcciones, cantDias;
 	cin >> cantAcciones >> cantDias;
-	long long int tmp;
+	long long int tmp; //como no hay cota en el anunciado para el valor de las acciones, mandamos long long : p
 
 	vector<vector<long long int> > valores (cantAcciones, vector<long long int> (cantDias) );	
 	for (int i = 0; i < cantAcciones; ++i){
@@ -90,7 +86,6 @@ int main() {
 	vector<vector<bool> > grafo ((valores.size()*2)+2, vector<bool> ((valores.size()*2)+2, false)); //deberia ser false por default aunque no este explicito, pero por las dudas lo ponemos :p
 	
 	buildGraph(valores, grafo);
-
 
 	vector<int> previousNode (grafo.size());
 	while(hasPathFromSourceToSink(grafo, previousNode)){
