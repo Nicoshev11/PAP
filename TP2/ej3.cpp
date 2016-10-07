@@ -98,7 +98,7 @@ int dfsCamino(int pos, int e2) {
 }
 
 int main() {
-    freopen("C.in", "r", stdin);
+    //freopen("C.in", "r", stdin);
     // leo el input
     int n, m;
     cin >> n >> m;
