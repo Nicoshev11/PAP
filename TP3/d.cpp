@@ -24,7 +24,7 @@ pair<int,int> dosMaximos (pair<int,int> maximos1, pair<int,int> maximos2){ //aca
 }
 
 
-pair<int,int> calcularMaximosIntervalo(vector< pair<int,int> > SegTree, int root,int minimoIntervalo, int maximoIntervalo, int inicioIntervalo, int finIntervalo){
+pair<int,int> calcularMaximosIntervalo(vector< pair<int,int> >& SegTree, int root,int minimoIntervalo, int maximoIntervalo, int inicioIntervalo, int finIntervalo){
     pair<int,int> inexistente = make_pair(0,0);
     if(inicioIntervalo >= finIntervalo) return inexistente;
     else if(minimoIntervalo>=maximoIntervalo) return inexistente;
@@ -45,9 +45,9 @@ int main(){
     cin >> D;
     cin >> R;
     int Daux = primerPotenciaDeDos(D);
-    vector< pair<int,int> > SegTree(2*Daux, make_pair(0,0)); // esto es el segment tree que en cada posicion tiene un par con los dos mayores del intervalo correspondiente. En las hojas se completa con un 0, tomandolo como elemento neutro de la función máximo (siendo que aplica sobre enteros no-negativos). Para facilitar las operaciones de comparación establecemos que dentro de cada par el primer elemento siempre sera mayor o igual al segundo.
+    vector< pair<int,int> > SegTree(2*Daux, make_pair(0,0)); // esto es el segment tree que en cada posicion tiene un par con los dos mayores del intervalo correspondiente. En las hojas se completa con un 0, tomandolo como elemento neutro de la funciÃ³n mÃ¡ximo (siendo que aplica sobre enteros no-negativos). Para facilitar las operaciones de comparaciÃ³n establecemos que dentro de cada par el primer elemento siempre sera mayor o igual al segundo.
 
-    //recordemos que las hojas están en las posiciones [Daux, 2*Daux). Y que los hijos de SegTree[i] son SegTree[i*2] y SegTree[i*2+1]. Asi como el padre de SegTree[i] es SegTree[i/2].
+    //recordemos que las hojas estÃ¡n en las posiciones [Daux, 2*Daux). Y que los hijos de SegTree[i] son SegTree[i*2] y SegTree[i*2+1]. Asi como el padre de SegTree[i] es SegTree[i/2].
 
     int diversion;
     for (int i=0; i<D; i++) {
