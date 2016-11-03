@@ -1,8 +1,7 @@
-// http://www.spoj.pl/problems/NHAY/
 #include <vector>
-#include <iostream>
 #include <string>
 #include <cstdio>
+#include <iostream>
 using namespace std;
 
 /* Funcion de prefijos */
