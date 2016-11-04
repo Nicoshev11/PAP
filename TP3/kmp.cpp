@@ -26,9 +26,9 @@ int kmp(string &t, string &s) {
   int res = -1;
   int t_length = t.size();
   int s_length = s.size();
-  vector<int> f = pf(t, t_length);
-  // en 'm' guardo el maximo indice de 't' menor que el indice del caracter que estoy recorriendo actualmente 
-  // en 't', tal que t[0..m] es prefijo de t y al mismo tiempo sufijo de 't'
+  vector<int> f = pf(t, t_length); // f = prefix function
+  // en 'm' guardo el maximo indice de 't' menor que el indice del caracter que estoy recorriendo 
+  // actualmente en 't', tal que t[0..m] es prefijo de t y al mismo tiempo sufijo de 't'
   int m = 0;
 
   // Recorro el string principal 's', buscando la presencia del substring 't'
@@ -39,7 +39,7 @@ int kmp(string &t, string &s) {
     m = m + 1;
     if (m == t_length) { // recorri todo t, luego, en el proximo (ultimo) paso, pruebo retroceder con f(t)
       res = i - t_length + 1;
-	    m = f[t_length];
+      m = f[t_length];
     }
   }
   return res;
@@ -48,6 +48,10 @@ int kmp(string &t, string &s) {
 int main(){
   string t, s;
   cin >> s >> t;
-  cout << kmp(t, s) << endl;
+  if (kmp(t, s) > -1) {
+    cout << "S" << endl;
+  } else {
+    cout << "N" << endl;
+  }
   return 0;
 }
