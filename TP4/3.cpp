@@ -49,18 +49,6 @@ bool comp_angulo(Punto a, Punto b) {
   return cuenta > 0;
 }
 
-// Setea el pivot con el punto mas chico en coordenadas y lo pone primero
-// en el vector
-void setPivot() {
-  int mejor = 0;
-  for (int i = 1; i < ph.size(); ++i) {
-    mejor = ph[i] < ph[mejor] ? i : mejor;
-  }
-
-  swap(ph[0], ph[mejor]);
-  pivot = ph[0];
-}
-
 float sign(Punto p1, Punto p2, Punto p3) {
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 }
@@ -124,6 +112,16 @@ int calc(int i, int j) {
   return ret;
 }
 
+void setPivot(Punto p) {
+  pivot = p;
+  for (int i = 0; i<ph.size(); ++i) {
+    if (ph[i] == p) {
+      swap(ph[0], ph[i]);
+      break;
+    }
+  }
+}
+
 int main() {
   freopen("3.in", "r", stdin);
 
@@ -137,20 +135,24 @@ int main() {
     cin >> pe[i].x >> pe[i].y;
   }
 
-  setPivot();
-  // Ordenamos los puntos por angulo
-  sort(ph.begin()+1, ph.end(), comp_angulo);
-
-  // Limpio la estructura de la dinamica
-  dp = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -1));
-  mem = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -2));
+  vector<Punto> copia_ph(ph);
   int ret = (ph.size() > 0 ? 1 : 0);
-  for (int i = 1; i < ph.size(); ++i) {
-    ret = max(ret, calc(0, i) + 2);
+  for (Punto p : copia_ph) {
+    setPivot(p);
+    // Ordenamos los puntos por angulo
+    sort(ph.begin()+1, ph.end(), comp_angulo);
+
+    // Limpio la estructura de la dinamica
+    dp = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -1));
+    mem = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -2));
+    
+    for (int i = 1; i < ph.size(); ++i) {
+      ret = max(ret, calc(0, i) + 2);
+    }
+    /*for (int i = 0; i < ph.size(); ++i) {
+      cout << ph[i].x << " " << ph[i].y << endl;
+    }*/
   }
   cout << ret << endl;
-  for (int i = 0; i < ph.size(); ++i) {
-    cout << ph[i].x << " " << ph[i].y << endl;
-  } 
   return 0;
 }
