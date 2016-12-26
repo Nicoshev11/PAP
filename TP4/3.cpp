@@ -17,6 +17,9 @@ struct Punto {
     return x == p.x && y == p.y;
   }
 
+  Punto operator - (const Punto &A) const { return Punto(x - A.x, y - A.y); }
+  int operator * (const Punto &A) const { return x * A.y - y * A.x; }
+
   Punto() {}
   Punto(int xx, int yy) {
     x = xx; y = yy;
@@ -42,19 +45,22 @@ int distancia(Punto a, Punto b)  {
 // Compara dos puntos por angulo, teniendo en cuenta el pivot que tomamos
 // como referencia
 bool comp_angulo(Punto a, Punto b) {
-  return ccw(pivot, a, b) > 0;
+    return (a - pivot) * (b - pivot) > 0;
 }
 
 float sign(Punto p1, Punto p2, Punto p3) {
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 }
-
+ 
 bool puntoEnTriangulo(Punto pt, Punto v1, Punto v2, Punto v3) {
-  bool b1, b2, b3;
-  b1 = sign(pt, v1, v2) < 0.0f;
-  b2 = sign(pt, v2, v3) < 0.0f;
-  b3 = sign(pt, v3, v1) < 0.0f;
-  return ((b1 == b2) && (b2 == b3));
+  int a = (v2 - pt) * (v3 - pt);
+  int b = (v3 - pt) * (v1 - pt);
+  int c = (v1 - pt) * (v2 - pt);
+  return abs(a + b + c) == abs(a) + abs(b) + abs(c);
+}
+
+bool buenPunto(Punto a) {
+    return a.x > pivot.x || (a.x == pivot.x && a.y < pivot.y);
 }
 
 // Calcula la cantidad de puntos dentro del triangulo pivot, i, j
@@ -79,16 +85,21 @@ int puntosDentro(int i, int j) {
 
 // dinamica
 vector<vector<int> > dp;
+vector<vector<int>> agarre;
 int calc(int i, int j) {
   int& ret = dp[i][j];
   if (ret != -1) return ret;
 
   ret = 0;
-  for (int k = j+1; k < ph.size(); ++k) {
+  for (int k = j+1; k < ph.size(); ++k) if (buenPunto(ph[k])) {
     if (ccw(ph[i], ph[j], ph[k]) <= 0) continue;
     int rr = puntosDentro(j, k);
     if (rr != -1) {
-      ret = max(ret, calc(j, k) + rr + 1);
+        rr += calc(j, k) + 1;
+        if (ret < rr) {
+            ret = rr;
+            agarre[i][j] = k;
+        }
     }
   }
   return ret;
@@ -98,10 +109,18 @@ void setPivot(Punto p) {
   pivot = p;
   for (int i = 0; i<ph.size(); ++i) {
     if (ph[i] == p) {
-      swap(ph[0], ph[i]);
-      break;
+      if (0 != i)
+        swap(ph[0], ph[i]);
+      return;
     }
   }
+}
+
+void calcAgarre(int i, int j) {
+    if (agarre[i][j] != -1) {
+        int k = agarre[i][j];
+        calcAgarre(j, k);
+    }
 }
 
 int main() {
@@ -121,15 +140,26 @@ int main() {
   int ret = (ph.size() > 0 ? 1 : 0);
   for (Punto p : copia_ph) {
     setPivot(p);
-    // Ordenamos los puntos por angulo
-    sort(ph.begin()+1, ph.end(), comp_angulo);
+
+    ph.clear();
+    ph.push_back(pivot);
+    for (Punto p : copia_ph) {
+        if (buenPunto(p)) {
+            ph.push_back(p);
+        }
+    }
 
     // Limpio la estructura de la dinamica
     dp = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -1));
+    agarre = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -1));
     mem = vector<vector<int>>(ph.size(), vector<int>(ph.size(), -2));
+
+    // Ordenamos los puntos por angulo
+    sort(ph.begin()+1, ph.end(), comp_angulo);
     
-    for (int i = 1; i < ph.size(); ++i) {
+    for (int i = 1; i < ph.size(); ++i) if (buenPunto(ph[i])) {
       ret = max(ret, calc(0, i) + 2);
+      calcAgarre(0, i);
     }
   }
   cout << ret << endl;
